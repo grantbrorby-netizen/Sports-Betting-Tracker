@@ -5,8 +5,10 @@ import { encrypt, decrypt, createKeyHint } from "$shared/encryption.ts";
 import {
   errorResponse,
   unauthorizedResponse,
+  rateLimitResponse,
   successResponse,
 } from "$shared/errors.ts";
+import { checkRateLimit, RATE_LIMITS } from "$shared/rate-limiter.ts";
 
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req);
@@ -14,6 +16,9 @@ Deno.serve(async (req) => {
 
   const user = getUserFromRequest(req);
   if (!user) return unauthorizedResponse();
+
+  const rateCheck = await checkRateLimit(user.id, RATE_LIMITS.apiKeys);
+  if (!rateCheck.allowed) return rateLimitResponse("Too many requests. Try again shortly.");
 
   const admin = createAdminClient();
   const url = new URL(req.url);

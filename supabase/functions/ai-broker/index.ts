@@ -12,6 +12,7 @@ import {
   rateLimitResponse,
   successResponse,
 } from "$shared/errors.ts";
+import { checkRateLimit, RATE_LIMITS } from "$shared/rate-limiter.ts";
 import { assemblePrompt, buildMessages } from "./prompt-assembler.ts";
 import {
   selectProvider,
@@ -31,10 +32,25 @@ Deno.serve(async (req) => {
   const user = getUserFromRequest(req);
   if (!user) return unauthorizedResponse();
 
+  // 1b. Rate limit
+  const rateCheck = await checkRateLimit(user.id, RATE_LIMITS.aiBroker);
+  if (!rateCheck.allowed) return rateLimitResponse("Too many requests. Try again shortly.");
+
+  // 1c. Payload size limit (100KB)
+  const contentLength = parseInt(req.headers.get("Content-Length") ?? "0", 10);
+  if (contentLength > 102400) {
+    return errorResponse("PAYLOAD_TOO_LARGE", "Request body exceeds 100KB limit", 413);
+  }
+
   const startTime = Date.now();
 
   try {
-    const body = await req.json();
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return errorResponse("VALIDATION", "Invalid JSON in request body");
+    }
     const { template_id, inputs, model_tier: requestedTier } = body;
 
     if (!template_id || !inputs) {

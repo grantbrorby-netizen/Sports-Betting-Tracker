@@ -1,9 +1,6 @@
-import { createAdminClient } from "./supabase-client.ts";
-
 /**
  * Per-user sliding window rate limiter.
- * Uses Supabase to track request timestamps.
- * Falls back to in-memory if DB is unavailable.
+ * In-memory per edge-function instance.
  */
 
 interface RateLimitConfig {

@@ -5,8 +5,10 @@ import {
   errorResponse,
   unauthorizedResponse,
   forbiddenResponse,
+  rateLimitResponse,
   successResponse,
 } from "$shared/errors.ts";
+import { checkRateLimit, RATE_LIMITS } from "$shared/rate-limiter.ts";
 
 import { schemaCheck } from "./checks/schema-check.ts";
 import { promptInjectionCheck } from "./checks/prompt-injection.ts";
@@ -34,6 +36,9 @@ Deno.serve(async (req) => {
   if (user.role !== "service_role") {
     return forbiddenResponse("Security scanning requires service role access");
   }
+
+  const rateCheck = await checkRateLimit(user.id, RATE_LIMITS.securityScanner);
+  if (!rateCheck.allowed) return rateLimitResponse("Too many scan requests. Try again shortly.");
 
   if (req.method !== "POST") {
     return errorResponse("METHOD_NOT_ALLOWED", "POST only", 405);

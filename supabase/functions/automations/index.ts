@@ -4,8 +4,10 @@ import { createAdminClient } from "$shared/supabase-client.ts";
 import {
   errorResponse,
   unauthorizedResponse,
+  rateLimitResponse,
   successResponse,
 } from "$shared/errors.ts";
+import { checkRateLimit, RATE_LIMITS } from "$shared/rate-limiter.ts";
 import {
   validateAutomationConfig,
   calculateNextRun,
@@ -18,6 +20,9 @@ Deno.serve(async (req) => {
 
   const user = getUserFromRequest(req);
   if (!user) return unauthorizedResponse();
+
+  const rateCheck = await checkRateLimit(user.id, RATE_LIMITS.automations);
+  if (!rateCheck.allowed) return rateLimitResponse("Too many requests. Try again shortly.");
 
   const admin = createAdminClient();
   const url = new URL(req.url);
