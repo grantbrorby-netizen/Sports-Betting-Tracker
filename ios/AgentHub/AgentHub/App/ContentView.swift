@@ -31,6 +31,11 @@ struct MainTabView: View {
                     Label("Store", systemImage: "square.grid.2x2.fill")
                 }
 
+            AutomationsListView()
+                .tabItem {
+                    Label("Automations", systemImage: "clock.badge.checkmark")
+                }
+
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")

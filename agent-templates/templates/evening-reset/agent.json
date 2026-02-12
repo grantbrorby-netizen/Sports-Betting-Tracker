@@ -1,0 +1,64 @@
+{
+  "id": "evening-reset",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Evening Reset",
+    "description": "End your day right. Captures what you accomplished, plans tomorrow's top 3, and gives you a quick stress reducer.",
+    "category": "productivity",
+    "iconName": "moon.stars.fill",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "accomplishments",
+      "type": "textarea",
+      "label": "What did you accomplish today?",
+      "placeholder": "List what you got done today, even small wins",
+      "required": true
+    },
+    {
+      "id": "unfinished",
+      "type": "textarea",
+      "label": "What's still on your plate?",
+      "placeholder": "Anything that didn't get done or needs follow-up",
+      "required": false
+    },
+    {
+      "id": "stress_level",
+      "type": "select",
+      "label": "Current Stress Level",
+      "required": false,
+      "options": ["low", "moderate", "high", "overwhelmed"],
+      "defaultValue": "moderate"
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are a supportive evening coach who helps people wind down and prepare for tomorrow.\n\nToday's accomplishments:\n{{accomplishments}}\n\nUnfinished items:\n{{unfinished}}\n\nStress level: {{stress_level}}\n\nRespond with EXACTLY this format:\n\n## ✅ Today's Wins\n[Reframe their accomplishments positively — acknowledge what they did, not what's left]\n\n## 🎯 Tomorrow's Top 3\n[Pick the 3 most important things for tomorrow from unfinished items + new priorities. Be specific.]\n\n## 🧘 Reset Ritual\n[Based on their stress level, give ONE specific 5-minute wind-down activity. For high stress, something calming. For low stress, something reflective.]\n\nKeep it warm but concise. Help them close the mental tabs.",
+    "maxTokens": 800,
+    "temperature": 0.7
+  },
+  "automation": {
+    "trigger": {
+      "type": "cron",
+      "defaultCron": "30 21 * * *",
+      "description": "Every day at 9:30 PM"
+    },
+    "steps": [
+      {
+        "name": "Reflect on the day",
+        "systemPrompt": "You are a supportive evening coach. Today is {{current_date}} ({{current_day_of_week}}).\n\nThe user's standing priorities are:\n{{accomplishments}}\n\nTheir typical stress level is {{stress_level}}.\n\nGenerate a brief evening reset:\n1. ✅ Today's Wins — assume they made progress and affirm it\n2. 🎯 Tomorrow's Top 3 — pick 3 focused priorities for tomorrow\n3. 🧘 Reset Ritual — one specific 5-minute wind-down based on stress level\n\nThis will be a push notification. Keep it warm and brief.",
+        "maxTokens": 600
+      }
+    ],
+    "action": {
+      "type": "push_notification",
+      "pushTitle": "🌙 Evening Reset",
+      "pushBodyMaxLength": 200
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "daily-plan-builder",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Daily Plan Builder",
+    "description": "Wakes you up with a clear plan. Turns your priorities into time blocks with a focused 'do this first' action.",
+    "category": "productivity",
+    "iconName": "sunrise.fill",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "priorities",
+      "type": "textarea",
+      "label": "Today's Priorities",
+      "placeholder": "List your top priorities for today, one per line",
+      "required": true
+    },
+    {
+      "id": "work_hours",
+      "type": "text",
+      "label": "Work Hours",
+      "placeholder": "e.g., 9 AM - 5 PM",
+      "required": false,
+      "defaultValue": "9 AM - 5 PM"
+    },
+    {
+      "id": "energy_level",
+      "type": "select",
+      "label": "Morning Energy Level",
+      "required": false,
+      "options": ["high", "medium", "low"],
+      "defaultValue": "medium"
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are a productivity coach who creates focused daily plans. Given the user's priorities, create a structured day plan.\n\nPriorities:\n{{priorities}}\n\nWork hours: {{work_hours}}\nMorning energy: {{energy_level}}\n\nRespond with EXACTLY this format:\n\n## 🎯 Do This First\n[Single most important task to start with, based on energy level and priority]\n\n## 📋 Today's Time Blocks\n[Time-blocked schedule fitting within work hours. Put high-energy tasks when energy is highest. Include short breaks.]\n\n## ⚡ Quick Wins\n[2-3 small tasks that can be done in under 10 minutes between blocks]\n\n## 🔒 Non-Negotiables\n[1-2 things that MUST happen today no matter what]\n\nKeep it actionable and concise. No fluff.",
+    "maxTokens": 1024,
+    "temperature": 0.6
+  },
+  "automation": {
+    "trigger": {
+      "type": "cron",
+      "defaultCron": "0 7 * * *",
+      "description": "Every day at 7:00 AM"
+    },
+    "steps": [
+      {
+        "name": "Build daily plan",
+        "systemPrompt": "You are a productivity coach. The user has these standing priorities:\n\n{{priorities}}\n\nToday is {{current_date}} ({{current_day_of_week}}). Their work hours are {{work_hours}} and morning energy is typically {{energy_level}}.\n\nCreate a focused daily plan with:\n1. 🎯 Do This First — the single most important task\n2. 📋 Time Blocks — a realistic schedule\n3. ⚡ Quick Wins — 2-3 small tasks for gaps\n4. 🔒 Non-Negotiables — 1-2 must-dos\n\nKeep it short and actionable. This will be delivered as a morning push notification.",
+        "maxTokens": 800
+      }
+    ],
+    "action": {
+      "type": "push_notification",
+      "pushTitle": "🌅 Your Daily Plan",
+      "pushBodyMaxLength": 200
+    }
+  }
+}

@@ -133,6 +133,88 @@
           "default": 0.7
         }
       }
+    },
+    "automation": {
+      "type": "object",
+      "description": "Optional automation config. When present, this template can run on a schedule.",
+      "required": ["trigger", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "trigger": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["cron"],
+              "description": "Trigger type. Currently only cron (time-based) is supported."
+            },
+            "defaultCron": {
+              "type": "string",
+              "pattern": "^(\\*|\\d+)\\s+(\\*|\\d+)\\s+(\\*|\\d+)\\s+(\\*|\\d+)\\s+(\\*|[0-6,]+)$",
+              "description": "Default cron expression (minute hour day-of-month month day-of-week). User can override."
+            },
+            "description": {
+              "type": "string",
+              "description": "Human-readable schedule description, e.g., 'Every day at 7:00 AM'"
+            }
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "description": "Chain of agent steps. Step N output feeds into step N+1 as {{previous_output}}.",
+          "items": {
+            "type": "object",
+            "required": ["name", "systemPrompt"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Human-readable step label"
+              },
+              "systemPrompt": {
+                "type": "string",
+                "minLength": 10,
+                "maxLength": 4000,
+                "description": "Step-specific prompt. Can reference {{previous_output}} for chained steps."
+              },
+              "maxTokens": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 4096,
+                "default": 1024
+              }
+            }
+          }
+        },
+        "action": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["push_notification", "save_result"],
+              "description": "What to do with the final output"
+            },
+            "pushTitle": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Push notification title template"
+            },
+            "pushBodyMaxLength": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 500,
+              "default": 200,
+              "description": "Max characters for push notification body (truncated from full output)"
+            }
+          }
+        }
+      }
     }
   }
 }

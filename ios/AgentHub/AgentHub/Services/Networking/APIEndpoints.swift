@@ -12,6 +12,7 @@ enum APIEndpoints {
     // User API Keys (BYOK)
     static let userAPIKeys = baseURL.appendingPathComponent("user-api-keys")
 
-    // Automations (Week 2)
+    // Automations
     static let automations = baseURL.appendingPathComponent("automations")
+    static let automationRuns = baseURL.appendingPathComponent("automation-runs")
 }

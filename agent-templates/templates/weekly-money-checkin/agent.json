@@ -1,0 +1,63 @@
+{
+  "id": "weekly-money-checkin",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Weekly Money Check-in",
+    "description": "Friday finance coach. Reviews your spending, spots what to cut, and gives you one clear action for the week ahead.",
+    "category": "finance",
+    "iconName": "dollarsign.circle.fill",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "spending_summary",
+      "type": "textarea",
+      "label": "This Week's Spending",
+      "placeholder": "List your major expenses this week (rough amounts are fine)\ne.g., Groceries $120, Dining out $85, Gas $45",
+      "required": true
+    },
+    {
+      "id": "weekly_budget",
+      "type": "text",
+      "label": "Weekly Budget Target",
+      "placeholder": "e.g., $500",
+      "required": false
+    },
+    {
+      "id": "financial_goal",
+      "type": "text",
+      "label": "Current Financial Goal",
+      "placeholder": "e.g., Save $5000 for emergency fund",
+      "required": false
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are a friendly, no-judgment financial coach. Review the user's weekly spending and give practical advice.\n\nThis week's spending:\n{{spending_summary}}\n\nWeekly budget target: {{weekly_budget}}\nFinancial goal: {{financial_goal}}\n\nRespond with EXACTLY this format:\n\n## 💰 Week in Review\n[Quick summary: total spent, vs budget if provided, biggest category]\n\n## ✂️ What to Cut\n[1-2 specific, realistic things they could reduce or eliminate. Don't be preachy — be practical. If spending looks reasonable, say so.]\n\n## 🎯 One Action This Week\n[Single specific money move for next week that moves them toward their goal. Make it concrete: \"Move $50 to savings on Monday\" not \"save more money\"]\n\n## 📊 Vibe Check\n[One sentence: are they on track, slightly off, or need a reset? Keep it encouraging.]\n\nBe direct and practical. No lecturing.",
+    "maxTokens": 800,
+    "temperature": 0.6
+  },
+  "automation": {
+    "trigger": {
+      "type": "cron",
+      "defaultCron": "0 17 * * 5",
+      "description": "Every Friday at 5:00 PM"
+    },
+    "steps": [
+      {
+        "name": "Analyze weekly spending",
+        "systemPrompt": "You are a friendly financial coach. Today is Friday, {{current_date}}.\n\nThe user tracks their spending with these categories:\n{{spending_summary}}\n\nTheir weekly budget target is {{weekly_budget}} and their financial goal is {{financial_goal}}.\n\nProvide a brief weekly money check-in:\n1. 💰 Week in Review — total and biggest category\n2. ✂️ What to Cut — 1-2 practical reductions\n3. 🎯 One Action — single specific money move for next week\n4. 📊 Vibe Check — one encouraging sentence\n\nThis will be a push notification. Keep it concise and judgment-free.",
+        "maxTokens": 600
+      }
+    ],
+    "action": {
+      "type": "push_notification",
+      "pushTitle": "💰 Weekly Money Check-in",
+      "pushBodyMaxLength": 200
+    }
+  }
+}

@@ -7,6 +7,7 @@ final class HomeViewModel: ObservableObject {
     @Published var installedAgents: [InstalledAgent] = []
     @Published var usage: UsageRecord = .empty
     @Published var subscription: UserSubscription?
+    @Published var activeAutomations: [Automation] = []
     @Published var isLoading = true
     @Published var error: Error?
 
@@ -30,14 +31,21 @@ final class HomeViewModel: ObservableObject {
         !installedAgents.isEmpty
     }
 
+    var hasActiveAutomations: Bool {
+        !activeAutomations.isEmpty
+    }
+
     func loadDashboard() async {
         isLoading = true
         error = nil
 
         do {
             async let fetchedUsage = UsageTracker.shared.fetchTodayUsage()
+            async let fetchedAutomations = AutomationService.shared.fetchAutomations()
             // TODO: Fetch installed agents and subscription from respective services
             usage = try await fetchedUsage
+            let allAutomations = try await fetchedAutomations
+            activeAutomations = allAutomations.filter { $0.isActive }
             isLoading = false
         } catch {
             self.error = error
@@ -90,6 +98,10 @@ struct HomeView: View {
                     tier: viewModel.currentTier
                 )
 
+                if viewModel.hasActiveAutomations {
+                    automationsSummarySection
+                }
+
                 if viewModel.hasAgents {
                     agentSections
                 } else {
@@ -133,6 +145,47 @@ struct HomeView: View {
         case 12..<17: return "Good afternoon"
         case 17..<22: return "Good evening"
         default: return "Good night"
+        }
+    }
+
+    // MARK: - Automations Summary
+
+    private var automationsSummarySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Active Automations", systemImage: "clock.badge.checkmark")
+                .sectionHeader()
+
+            HStack(spacing: 14) {
+                Image(systemName: "bolt.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(Color.brandPrimary)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(viewModel.activeAutomations.count) automation\(viewModel.activeAutomations.count == 1 ? "" : "s") running")
+                        .font(.appSubheadline)
+                        .foregroundStyle(.primary)
+
+                    if let nextRun = viewModel.activeAutomations
+                        .compactMap({ $0.nextRunAt })
+                        .sorted()
+                        .first {
+                        Text("Next run: \(nextRun, style: .relative)")
+                            .font(.appCaption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                NavigationLink {
+                    AutomationsListView()
+                } label: {
+                    Text("View")
+                        .font(.appCaption)
+                        .foregroundStyle(Color.brandPrimary)
+                }
+            }
+            .cardStyle()
         }
     }
 

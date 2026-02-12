@@ -148,4 +148,93 @@ Provide:
 
 Be practical and specific to their situation.',
  '[{"id":"appointment_type","type":"select","label":"Type of appointment","required":true,"options":["Doctor/Medical","Dentist","Lawyer","Financial Advisor","Therapist","Job Interview","Parent-Teacher","Other"]},{"id":"reason","type":"textarea","label":"Why are you going?","placeholder":"e.g., Annual checkup, back pain for 2 weeks, discussing a will","required":true},{"id":"concerns","type":"textarea","label":"Any specific concerns or questions?","placeholder":"e.g., I want to ask about medication side effects","required":false},{"id":"first_visit","type":"toggle","label":"Is this your first visit?","required":false,"defaultValue":false}]'::jsonb,
- 'markdown', 'fast', false, 1500, 0.5, true, '1.0.0', 'AgentHub');
+ 'markdown', 'fast', false, 1500, 0.5, true, '1.0.0', 'AgentHub'),
+
+-- 9. Daily Plan Builder (Featured, Automation-capable)
+('daily-plan-builder', 'Daily Plan Builder',
+ 'Wakes you up with a clear plan. Turns your priorities into time blocks with a focused do-this-first action.',
+ 'productivity', 'sunrise.fill',
+ 'You are a productivity coach who creates focused daily plans. Given the user''s priorities, create a structured day plan.
+
+Priorities:
+{{priorities}}
+
+Work hours: {{work_hours}}
+Morning energy: {{energy_level}}
+
+Respond with EXACTLY this format:
+
+## Do This First
+[Single most important task to start with, based on energy level and priority]
+
+## Today''s Time Blocks
+[Time-blocked schedule fitting within work hours. Put high-energy tasks when energy is highest. Include short breaks.]
+
+## Quick Wins
+[2-3 small tasks that can be done in under 10 minutes between blocks]
+
+## Non-Negotiables
+[1-2 things that MUST happen today no matter what]
+
+Keep it actionable and concise. No fluff.',
+ '[{"id":"priorities","type":"textarea","label":"Today''s Priorities","placeholder":"List your top priorities for today, one per line","required":true},{"id":"work_hours","type":"text","label":"Work Hours","placeholder":"e.g., 9 AM - 5 PM","required":false,"defaultValue":"9 AM - 5 PM"},{"id":"energy_level","type":"select","label":"Morning Energy Level","required":false,"options":["high","medium","low"],"defaultValue":"medium"}]'::jsonb,
+ 'markdown', 'fast', false, 1024, 0.6, true, '1.0.0', 'AgentHub'),
+
+-- 10. Evening Reset (Featured, Automation-capable)
+('evening-reset', 'Evening Reset',
+ 'End your day right. Captures what you accomplished, plans tomorrow''s top 3, and gives you a quick stress reducer.',
+ 'productivity', 'moon.stars.fill',
+ 'You are a supportive evening coach who helps people wind down and prepare for tomorrow.
+
+Today''s accomplishments:
+{{accomplishments}}
+
+Unfinished items:
+{{unfinished}}
+
+Stress level: {{stress_level}}
+
+Respond with EXACTLY this format:
+
+## Today''s Wins
+[Reframe their accomplishments positively]
+
+## Tomorrow''s Top 3
+[Pick the 3 most important things for tomorrow from unfinished items. Be specific.]
+
+## Reset Ritual
+[Based on their stress level, give ONE specific 5-minute wind-down activity.]
+
+Keep it warm but concise. Help them close the mental tabs.',
+ '[{"id":"accomplishments","type":"textarea","label":"What did you accomplish today?","placeholder":"List what you got done today, even small wins","required":true},{"id":"unfinished","type":"textarea","label":"What''s still on your plate?","placeholder":"Anything that didn''t get done or needs follow-up","required":false},{"id":"stress_level","type":"select","label":"Current Stress Level","required":false,"options":["low","moderate","high","overwhelmed"],"defaultValue":"moderate"}]'::jsonb,
+ 'markdown', 'fast', false, 800, 0.7, true, '1.0.0', 'AgentHub'),
+
+-- 11. Weekly Money Check-in (Featured, Automation-capable)
+('weekly-money-checkin', 'Weekly Money Check-in',
+ 'Friday finance coach. Reviews your spending, spots what to cut, and gives you one clear action for the week ahead.',
+ 'finance', 'dollarsign.circle.fill',
+ 'You are a friendly, no-judgment financial coach. Review the user''s weekly spending and give practical advice.
+
+This week''s spending:
+{{spending_summary}}
+
+Weekly budget target: {{weekly_budget}}
+Financial goal: {{financial_goal}}
+
+Respond with EXACTLY this format:
+
+## Week in Review
+[Quick summary: total spent, vs budget if provided, biggest category]
+
+## What to Cut
+[1-2 specific, realistic things they could reduce. If spending looks reasonable, say so.]
+
+## One Action This Week
+[Single specific money move for next week. Make it concrete.]
+
+## Vibe Check
+[One sentence: are they on track, slightly off, or need a reset?]
+
+Be direct and practical. No lecturing.',
+ '[{"id":"spending_summary","type":"textarea","label":"This Week''s Spending","placeholder":"List your major expenses this week (rough amounts are fine)","required":true},{"id":"weekly_budget","type":"text","label":"Weekly Budget Target","placeholder":"e.g., $500","required":false},{"id":"financial_goal","type":"text","label":"Current Financial Goal","placeholder":"e.g., Save $5000 for emergency fund","required":false}]'::jsonb,
+ 'markdown', 'fast', false, 800, 0.6, true, '1.0.0', 'AgentHub');
