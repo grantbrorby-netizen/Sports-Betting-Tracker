@@ -1,0 +1,204 @@
+{
+  "identifier" : "D7A8F3E2-1B4C-4D5E-9F6A-8C2B0E1D3F5A",
+  "type" : "Configuration",
+  "version" : 3,
+  "subscriptionGroups" : [
+    {
+      "id" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+      "localizations" : [
+        {
+          "description" : "Access AI agents with different usage tiers",
+          "displayName" : "AgentHub Subscription",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "AgentHub Subscription",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "F1E2D3C4-B5A6-9788-7654-321FEDCBA001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "15 agents, 75 fast AI calls per day",
+              "displayName" : "Starter Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.agenthub.starter.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Starter Monthly",
+          "subscriptionGroupID" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "F1E2D3C4-B5A6-9788-7654-321FEDCBA002",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "15 agents, 75 fast AI calls per day — save 17%",
+              "displayName" : "Starter Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.agenthub.starter.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Starter Annual",
+          "subscriptionGroupID" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "F1E2D3C4-B5A6-9788-7654-321FEDCBA003",
+          "introductoryOffer" : {
+            "internalID" : "INTRO-PRO-MONTHLY-001",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W",
+            "numberOfPeriods" : 1,
+            "displayPrice" : "0.00"
+          },
+          "localizations" : [
+            {
+              "description" : "50 agents, smart + deep AI, 3 automations",
+              "displayName" : "Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.agenthub.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Pro Monthly",
+          "subscriptionGroupID" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "299.99",
+          "familyShareable" : false,
+          "groupNumber" : 4,
+          "internalID" : "F1E2D3C4-B5A6-9788-7654-321FEDCBA004",
+          "introductoryOffer" : {
+            "internalID" : "INTRO-PRO-ANNUAL-001",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W",
+            "numberOfPeriods" : 1,
+            "displayPrice" : "0.00"
+          },
+          "localizations" : [
+            {
+              "description" : "50 agents, smart + deep AI, 3 automations — save 17%",
+              "displayName" : "Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.agenthub.pro.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Pro Annual",
+          "subscriptionGroupID" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 5,
+          "internalID" : "F1E2D3C4-B5A6-9788-7654-321FEDCBA005",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited agents, all AI tiers, 10 automations",
+              "displayName" : "Unlimited Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.agenthub.unlimited.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Unlimited Monthly",
+          "subscriptionGroupID" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "999.99",
+          "familyShareable" : false,
+          "groupNumber" : 6,
+          "internalID" : "F1E2D3C4-B5A6-9788-7654-321FEDCBA006",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited agents, all AI tiers, 10 automations — save 17%",
+              "displayName" : "Unlimited Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.agenthub.unlimited.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Unlimited Annual",
+          "subscriptionGroupID" : "A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ],
+    "_timeRate" : 6
+  }
+}

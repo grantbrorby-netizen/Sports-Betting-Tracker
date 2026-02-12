@@ -1,0 +1,70 @@
+name: AgentHub
+options:
+  bundleIdPrefix: com.agenthub
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: "${DEVELOPMENT_TEAM}"
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  AgentHub:
+    type: application
+    platform: iOS
+    sources:
+      - path: AgentHub
+        excludes:
+          - "**/*.storekit"
+    resources:
+      - path: AgentHub/Resources/Assets.xcassets
+      - path: AgentHub/Resources/Products.storekit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.agenthub.app
+        INFOPLIST_FILE: AgentHub/Info.plist
+        CODE_SIGN_ENTITLEMENTS: AgentHub/AgentHub.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: true
+        SWIFT_EMIT_LOC_STRINGS: true
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          SWIFT_OPTIMIZATION_LEVEL: -Onone
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: -O
+
+    entitlements:
+      path: AgentHub/AgentHub.entitlements
+      properties:
+        com.apple.developer.applesignin:
+          - Default
+        aps-environment: development
+        com.apple.developer.in-app-payments:
+          - merchant.com.agenthub.app
+
+    scheme:
+      testTargets:
+        - AgentHubTests
+      storeKitConfiguration: AgentHub/Resources/Products.storekit
+
+  AgentHubTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AgentHubTests
+    dependencies:
+      - target: AgentHub
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.agenthub.app.tests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AgentHub.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AgentHub"
+        BUNDLE_LOADER: "$(TEST_HOST)"
