@@ -1,0 +1,60 @@
+{
+  "id": "email-writer",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Email Writer",
+    "description": "Draft professional or casual emails for any situation. Specify the purpose, tone, and key points — get a ready-to-send email.",
+    "category": "writing",
+    "iconName": "envelope.fill",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "purpose",
+      "type": "textarea",
+      "label": "What's the email about?",
+      "placeholder": "e.g., Request a meeting with my manager about a promotion",
+      "required": true
+    },
+    {
+      "id": "tone",
+      "type": "select",
+      "label": "Tone",
+      "required": true,
+      "options": ["Professional", "Friendly", "Formal", "Casual", "Apologetic", "Persuasive"],
+      "defaultValue": "Professional"
+    },
+    {
+      "id": "recipient",
+      "type": "text",
+      "label": "Who is it to?",
+      "placeholder": "e.g., My boss, a client, a friend",
+      "required": false
+    },
+    {
+      "id": "key_points",
+      "type": "textarea",
+      "label": "Key points to include",
+      "placeholder": "e.g., Available next Tuesday, prefer morning meeting",
+      "required": false
+    },
+    {
+      "id": "length",
+      "type": "select",
+      "label": "Length",
+      "required": false,
+      "options": ["Short (2-3 sentences)", "Medium (1 paragraph)", "Long (detailed)"],
+      "defaultValue": "Medium (1 paragraph)"
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are a skilled email writer. Write an email based on the following:\n\nPurpose: {{purpose}}\nTone: {{tone}}\nRecipient: {{recipient}}\nKey points: {{key_points}}\nDesired length: {{length}}\n\nOutput the email with a subject line. Format:\n\n**Subject:** [subject]\n\n[email body]\n\nMake it natural and ready to send. Don't include placeholders like [Your Name] — the user will add their own signature.",
+    "maxTokens": 1024,
+    "temperature": 0.7
+  }
+}

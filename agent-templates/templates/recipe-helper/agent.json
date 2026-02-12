@@ -1,0 +1,60 @@
+{
+  "id": "recipe-helper",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Recipe Helper",
+    "description": "Tell me what ingredients you have and I'll suggest recipes you can make right now. Supports dietary restrictions and skill levels.",
+    "category": "cooking",
+    "iconName": "fork.knife",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "ingredients",
+      "type": "textarea",
+      "label": "What ingredients do you have?",
+      "placeholder": "e.g., chicken, rice, bell peppers, onions, soy sauce, garlic",
+      "required": true
+    },
+    {
+      "id": "dietary",
+      "type": "select",
+      "label": "Dietary preference",
+      "required": false,
+      "options": ["No restriction", "Vegetarian", "Vegan", "Gluten-free", "Keto", "Dairy-free"]
+    },
+    {
+      "id": "meal_type",
+      "type": "select",
+      "label": "Meal type",
+      "required": false,
+      "options": ["Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Any"]
+    },
+    {
+      "id": "time_available",
+      "type": "select",
+      "label": "How much time?",
+      "required": false,
+      "options": ["15 min (quick)", "30 min", "45 min", "1 hour+"],
+      "defaultValue": "30 min"
+    },
+    {
+      "id": "servings",
+      "type": "number",
+      "label": "Servings",
+      "placeholder": "2",
+      "required": false,
+      "defaultValue": 2
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are a creative home cook assistant. Based on these ingredients, suggest 2-3 recipes:\n\n**Ingredients available:** {{ingredients}}\n**Dietary preference:** {{dietary}}\n**Meal type:** {{meal_type}}\n**Time available:** {{time_available}}\n**Servings:** {{servings}}\n\nFor each recipe, provide:\n1. **Recipe name**\n2. **Time** (prep + cook)\n3. **Ingredients** (with amounts, note if any extras are needed)\n4. **Steps** (numbered, clear and concise)\n5. **Tips** (optional, one pro tip)\n\nKeep instructions simple and beginner-friendly. Prioritize recipes that use mostly the listed ingredients.",
+    "maxTokens": 2000,
+    "temperature": 0.8
+  }
+}

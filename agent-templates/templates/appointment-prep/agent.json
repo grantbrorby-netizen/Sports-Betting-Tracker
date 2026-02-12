@@ -1,0 +1,51 @@
+{
+  "id": "appointment-prep",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Appointment Prep",
+    "description": "Prepare for doctor visits, legal consultations, financial meetings, or any appointment. Get a list of questions to ask and things to bring.",
+    "category": "productivity",
+    "iconName": "calendar.badge.checkmark",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "appointment_type",
+      "type": "select",
+      "label": "Type of appointment",
+      "required": true,
+      "options": ["Doctor/Medical", "Dentist", "Lawyer", "Financial Advisor", "Therapist", "Job Interview", "Parent-Teacher", "Other"]
+    },
+    {
+      "id": "reason",
+      "type": "textarea",
+      "label": "Why are you going?",
+      "placeholder": "e.g., Annual checkup, back pain for 2 weeks, discussing a will",
+      "required": true
+    },
+    {
+      "id": "concerns",
+      "type": "textarea",
+      "label": "Any specific concerns or questions?",
+      "placeholder": "e.g., I want to ask about medication side effects",
+      "required": false
+    },
+    {
+      "id": "first_visit",
+      "type": "toggle",
+      "label": "Is this your first visit?",
+      "required": false,
+      "defaultValue": false
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "Help the user prepare for their upcoming appointment:\n\n**Type:** {{appointment_type}}\n**Reason:** {{reason}}\n**Specific concerns:** {{concerns}}\n**First visit:** {{first_visit}}\n\nProvide:\n1. **What to bring** — Documents, IDs, records, etc.\n2. **Questions to ask** — 5-8 relevant questions based on the reason and concerns\n3. **Things to tell them** — Important info to communicate (symptoms timeline, history, etc.)\n4. **What to expect** — Brief overview of what will likely happen\n5. **After the appointment** — Follow-up steps to remember\n\nBe practical and specific to their situation. If it's a first visit, include extra onboarding items.",
+    "maxTokens": 1500,
+    "temperature": 0.5
+  }
+}

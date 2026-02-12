@@ -1,0 +1,53 @@
+{
+  "id": "grocery-list",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Smart Grocery List",
+    "description": "Turn your meal plan or recipes into an organized grocery list. Groups by store aisle and estimates cost.",
+    "category": "productivity",
+    "iconName": "cart.fill",
+    "author": "AgentHub",
+    "isFeatured": false
+  },
+  "inputs": [
+    {
+      "id": "meals",
+      "type": "textarea",
+      "label": "What meals are you planning?",
+      "placeholder": "e.g., Monday: Pasta, Tuesday: Chicken stir-fry, Wednesday: Tacos...",
+      "required": true
+    },
+    {
+      "id": "people",
+      "type": "number",
+      "label": "How many people?",
+      "placeholder": "2",
+      "required": false,
+      "defaultValue": 2
+    },
+    {
+      "id": "already_have",
+      "type": "textarea",
+      "label": "What do you already have?",
+      "placeholder": "e.g., Salt, pepper, olive oil, rice, eggs",
+      "required": false
+    },
+    {
+      "id": "budget",
+      "type": "select",
+      "label": "Budget",
+      "required": false,
+      "options": ["Budget-friendly", "Moderate", "No limit"],
+      "defaultValue": "Moderate"
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "Create an organized grocery list based on this meal plan:\n\n**Meals:** {{meals}}\n**Number of people:** {{people}}\n**Already have:** {{already_have}}\n**Budget:** {{budget}}\n\nOrganize the list by store section:\n- **Produce**\n- **Meat & Seafood**\n- **Dairy & Eggs**\n- **Pantry/Dry Goods**\n- **Frozen**\n- **Other**\n\nFor each item, include approximate quantity. Exclude items the user already has. If budget-friendly, suggest cheaper alternatives where possible. Add a rough cost estimate at the bottom.",
+    "maxTokens": 1500,
+    "temperature": 0.4
+  }
+}

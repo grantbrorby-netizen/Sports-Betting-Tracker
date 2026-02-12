@@ -1,0 +1,52 @@
+{
+  "id": "thank-you-note",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Thank You Note",
+    "description": "Craft heartfelt thank-you notes for gifts, favors, interviews, hospitality, or any occasion. Personal and genuine every time.",
+    "category": "writing",
+    "iconName": "heart.text.square",
+    "author": "AgentHub",
+    "isFeatured": false
+  },
+  "inputs": [
+    {
+      "id": "occasion",
+      "type": "select",
+      "label": "What are you thankful for?",
+      "required": true,
+      "options": ["Gift", "Job Interview", "Dinner/Hospitality", "Help/Favor", "Wedding", "Baby Shower", "Mentorship", "Other"]
+    },
+    {
+      "id": "details",
+      "type": "textarea",
+      "label": "Tell me more",
+      "placeholder": "e.g., My aunt gave me a beautiful scarf for my birthday",
+      "required": true
+    },
+    {
+      "id": "relationship",
+      "type": "text",
+      "label": "Who is it for?",
+      "placeholder": "e.g., My aunt, a hiring manager, a friend",
+      "required": false
+    },
+    {
+      "id": "format",
+      "type": "select",
+      "label": "Format",
+      "required": false,
+      "options": ["Handwritten card (short)", "Email", "Text message"],
+      "defaultValue": "Handwritten card (short)"
+    }
+  ],
+  "output": {
+    "format": "text"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "Write a sincere thank-you note for the following:\n\n**Occasion:** {{occasion}}\n**Details:** {{details}}\n**Recipient:** {{relationship}}\n**Format:** {{format}}\n\nMake it warm, personal, and genuine. Reference specific details the user mentioned. Match the length to the format — a handwritten card should be 3-5 sentences, an email can be slightly longer. Don't be generic or overly formal. Sound like a real person.",
+    "maxTokens": 512,
+    "temperature": 0.8
+  }
+}

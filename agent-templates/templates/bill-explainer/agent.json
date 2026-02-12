@@ -1,0 +1,44 @@
+{
+  "id": "bill-explainer",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Bill Explainer",
+    "description": "Paste any bill, invoice, or statement and get a plain-English breakdown. Understand exactly what you're paying for and spot anything unusual.",
+    "category": "finance",
+    "iconName": "doc.text.magnifyingglass",
+    "author": "AgentHub",
+    "isFeatured": true
+  },
+  "inputs": [
+    {
+      "id": "bill_text",
+      "type": "textarea",
+      "label": "Paste your bill or statement",
+      "placeholder": "Paste the text from your bill, invoice, or statement here...",
+      "required": true
+    },
+    {
+      "id": "bill_type",
+      "type": "select",
+      "label": "What kind of bill?",
+      "required": false,
+      "options": ["Medical", "Utility", "Phone/Internet", "Insurance", "Credit Card", "Tax", "Legal", "Other"]
+    },
+    {
+      "id": "concerns",
+      "type": "textarea",
+      "label": "Anything specific you want explained?",
+      "placeholder": "e.g., Why is my bill higher this month?",
+      "required": false
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are a helpful financial assistant that explains bills in plain English. Analyze the following bill:\n\n**Bill content:**\n{{bill_text}}\n\n**Bill type:** {{bill_type}}\n**User's concerns:** {{concerns}}\n\nProvide:\n1. **Summary** — What this bill is for and the total amount\n2. **Line-by-line breakdown** — Explain each charge in simple terms\n3. **Things to note** — Anything unusual, higher than expected, or worth questioning\n4. **Action items** — What the user needs to do (pay by date, call to dispute, etc.)\n\nUse simple language. Avoid jargon. If something looks unusual or overcharged, flag it clearly.",
+    "maxTokens": 1500,
+    "temperature": 0.3
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentHub Agent Template v1",
+  "description": "Schema for agent templates in AgentHub. JSON-only, no executable code.",
+  "type": "object",
+  "required": ["id", "version", "metadata", "inputs", "output", "ai"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique kebab-case identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "description", "category", "iconName", "author"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "category": {
+          "type": "string",
+          "enum": ["writing", "finance", "productivity", "health", "cooking", "legal"]
+        },
+        "iconName": {
+          "type": "string",
+          "description": "SF Symbol name"
+        },
+        "author": {
+          "type": "string"
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["text", "textarea", "select", "number", "toggle", "photo"]
+          },
+          "label": {
+            "type": "string"
+          },
+          "placeholder": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean",
+            "default": true
+          },
+          "options": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Only for select type"
+          },
+          "defaultValue": {
+            "type": ["string", "number", "boolean"]
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["format"],
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["text", "markdown", "structured"]
+        },
+        "schema": {
+          "type": "object",
+          "description": "Optional JSON schema for structured output"
+        }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "required": ["defaultModelTier", "systemPrompt"],
+      "additionalProperties": false,
+      "properties": {
+        "defaultModelTier": {
+          "type": "string",
+          "enum": ["fast", "smart", "deep", "max"]
+        },
+        "systemPrompt": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 4000,
+          "description": "Prompt with {{input_id}} placeholders"
+        },
+        "requiresVision": {
+          "type": "boolean",
+          "default": false
+        },
+        "maxTokens": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 4096,
+          "default": 1024
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1.5,
+          "default": 0.7
+        }
+      }
+    }
+  }
+}

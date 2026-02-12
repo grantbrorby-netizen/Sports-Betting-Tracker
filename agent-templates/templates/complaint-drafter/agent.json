@@ -1,0 +1,59 @@
+{
+  "id": "complaint-drafter",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Complaint Drafter",
+    "description": "Write effective complaint letters to companies, landlords, or service providers. Professional, firm, and action-oriented.",
+    "category": "writing",
+    "iconName": "exclamationmark.bubble.fill",
+    "author": "AgentHub",
+    "isFeatured": false
+  },
+  "inputs": [
+    {
+      "id": "company",
+      "type": "text",
+      "label": "Who are you complaining to?",
+      "placeholder": "e.g., Comcast, my landlord, Delta Airlines",
+      "required": true
+    },
+    {
+      "id": "issue",
+      "type": "textarea",
+      "label": "What happened?",
+      "placeholder": "Describe the problem — what went wrong, when, and how it affected you",
+      "required": true
+    },
+    {
+      "id": "desired_outcome",
+      "type": "textarea",
+      "label": "What do you want them to do?",
+      "placeholder": "e.g., Full refund, repair the issue, credit my account",
+      "required": true
+    },
+    {
+      "id": "previous_attempts",
+      "type": "textarea",
+      "label": "Have you tried to resolve this already?",
+      "placeholder": "e.g., Called customer service 3 times, was promised a callback",
+      "required": false
+    },
+    {
+      "id": "format",
+      "type": "select",
+      "label": "Format",
+      "required": false,
+      "options": ["Formal letter", "Email", "Social media post"],
+      "defaultValue": "Email"
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are an expert at writing effective complaint communications. Draft a {{format}} to {{company}}:\n\n**Issue:** {{issue}}\n**Desired outcome:** {{desired_outcome}}\n**Previous resolution attempts:** {{previous_attempts}}\n\nGuidelines:\n- Be professional but firm — never rude or threatening\n- State facts clearly with specific dates/details\n- Reference any previous attempts to resolve\n- Clearly state the desired resolution\n- Include a reasonable deadline for response\n- If a formal letter, include proper formatting\n- Mention relevant consumer rights where applicable\n\nThe goal is to get results, not vent.",
+    "maxTokens": 1500,
+    "temperature": 0.5
+  }
+}

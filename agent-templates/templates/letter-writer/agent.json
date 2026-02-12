@@ -1,0 +1,52 @@
+{
+  "id": "letter-writer",
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Letter Writer",
+    "description": "Write formal or informal letters for any occasion — cover letters, landlord notices, recommendation requests, personal letters, and more.",
+    "category": "writing",
+    "iconName": "doc.richtext",
+    "author": "AgentHub",
+    "isFeatured": false
+  },
+  "inputs": [
+    {
+      "id": "letter_type",
+      "type": "select",
+      "label": "Type of letter",
+      "required": true,
+      "options": ["Cover Letter", "Recommendation Request", "Landlord Notice", "Resignation", "Personal", "Business Inquiry", "Other"]
+    },
+    {
+      "id": "details",
+      "type": "textarea",
+      "label": "What should the letter say?",
+      "placeholder": "Describe the situation and key points to cover...",
+      "required": true
+    },
+    {
+      "id": "tone",
+      "type": "select",
+      "label": "Tone",
+      "required": true,
+      "options": ["Formal", "Professional", "Warm", "Firm", "Grateful"],
+      "defaultValue": "Professional"
+    },
+    {
+      "id": "recipient_name",
+      "type": "text",
+      "label": "Recipient name (optional)",
+      "placeholder": "e.g., Dr. Smith, Hiring Manager",
+      "required": false
+    }
+  ],
+  "output": {
+    "format": "markdown"
+  },
+  "ai": {
+    "defaultModelTier": "fast",
+    "systemPrompt": "You are an expert letter writer. Write a {{letter_type}} with the following details:\n\n**Details:** {{details}}\n**Tone:** {{tone}}\n**Recipient:** {{recipient_name}}\n\nFormat the letter properly with date, greeting, body paragraphs, and closing. Make it ready to print or send. Don't include placeholder names for the sender — the user will add their own.",
+    "maxTokens": 1500,
+    "temperature": 0.7
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.49.1",
+    "hono": "https://deno.land/x/hono@v4.3.4/mod.ts",
+    "hono/cors": "https://deno.land/x/hono@v4.3.4/middleware/cors/index.ts",
+    "$shared/": "./_shared/"
+  }
+}
