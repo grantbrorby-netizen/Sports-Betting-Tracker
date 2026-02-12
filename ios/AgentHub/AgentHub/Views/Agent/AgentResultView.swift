@@ -1,42 +1,168 @@
 import SwiftUI
 
 struct AgentResultView: View {
+    let agentName: String
     let result: AgentExecutionService.ExecutionResult
     var onRunAgain: (() -> Void)?
 
     @State private var showCopied = false
 
+    private var modelTier: ModelTier? {
+        ModelTier(rawValue: result.modelTier)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack {
-                Text("Result")
-                    .font(.appHeadline)
-                Spacer()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                headerSection
+                outputSection
+                metadataSection
+                actionButtons
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 16)
+            .padding(.bottom, 32)
+        }
+        .navigationTitle("Result")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
                 UsageBadge(isByok: result.isByok)
             }
+        }
+    }
 
-            Divider()
+    // MARK: - Header
 
-            // Output text
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(Color.statusSuccess)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(agentName)
+                        .font(.appHeadline)
+
+                    Text("Completed successfully")
+                        .font(.appCaption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+        }
+    }
+
+    // MARK: - Output
+
+    private var outputSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Output")
+                .sectionHeader()
+
             Text(result.output)
                 .font(.appBody)
                 .textSelection(.enabled)
-                .padding()
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.surfaceElevated)
-                .cornerRadius(10)
+                .cornerRadius(12)
+        }
+    }
 
-            // Meta info
-            HStack(spacing: 16) {
-                Label(result.provider.capitalized, systemImage: "cpu")
-                Label("\(result.tokensUsed) tokens", systemImage: "number")
-                Label("\(result.durationMs)ms", systemImage: "clock")
+    // MARK: - Metadata
+
+    private var metadataSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Details")
+                .sectionHeader()
+
+            VStack(spacing: 0) {
+                metadataRow(
+                    icon: "cpu",
+                    label: "Provider",
+                    value: result.provider.capitalized
+                )
+
+                Divider().padding(.leading, 44)
+
+                metadataRow(
+                    icon: modelTier?.iconName ?? "bolt",
+                    label: "Model Tier",
+                    value: modelTier?.displayName ?? result.modelTier.capitalized
+                )
+
+                Divider().padding(.leading, 44)
+
+                metadataRow(
+                    icon: "number",
+                    label: "Tokens Used",
+                    value: "\(result.tokensUsed)"
+                )
+
+                Divider().padding(.leading, 44)
+
+                metadataRow(
+                    icon: "clock",
+                    label: "Duration",
+                    value: formattedDuration
+                )
+
+                if result.isByok {
+                    Divider().padding(.leading, 44)
+
+                    metadataRow(
+                        icon: "key.fill",
+                        label: "API Key",
+                        value: "Your Key (BYOK)"
+                    )
+                }
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .background(Color.surfaceCard)
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+        }
+    }
 
-            // Actions
+    private func metadataRow(icon: String, label: String, value: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(Color.brandPrimary)
+                .frame(width: 24, height: 24)
+                .background(Color.brandPrimary.opacity(0.1))
+                .cornerRadius(6)
+
+            Text(label)
+                .font(.appSubheadline)
+                .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Text(value)
+                .font(.appSubheadline)
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 14)
+    }
+
+    private var formattedDuration: String {
+        let ms = result.durationMs
+        if ms < 1000 {
+            return "\(ms)ms"
+        } else {
+            let seconds = Double(ms) / 1000.0
+            return String(format: "%.1fs", seconds)
+        }
+    }
+
+    // MARK: - Action Buttons
+
+    private var actionButtons: some View {
+        VStack(spacing: 12) {
             HStack(spacing: 12) {
                 Button {
                     UIPasteboard.general.string = result.output
@@ -47,7 +173,10 @@ struct AgentResultView: View {
                         showCopied = false
                     }
                 } label: {
-                    Label(showCopied ? "Copied!" : "Copy", systemImage: showCopied ? "checkmark" : "doc.on.doc")
+                    Label(
+                        showCopied ? "Copied!" : "Copy",
+                        systemImage: showCopied ? "checkmark" : "doc.on.doc"
+                    )
                 }
                 .buttonStyle(SecondaryButtonStyle())
 
@@ -55,15 +184,35 @@ struct AgentResultView: View {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
                 .buttonStyle(SecondaryButtonStyle())
+            }
 
-                if let onRunAgain = onRunAgain {
-                    Button(action: onRunAgain) {
-                        Label("Run Again", systemImage: "arrow.counterclockwise")
-                    }
-                    .buttonStyle(SecondaryButtonStyle())
+            if let onRunAgain {
+                Button(action: onRunAgain) {
+                    Label("Run Again", systemImage: "arrow.counterclockwise")
                 }
+                .buttonStyle(PrimaryButtonStyle())
             }
         }
-        .cardStyle()
+        .padding(.top, 4)
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    NavigationStack {
+        AgentResultView(
+            agentName: "Email Composer",
+            result: AgentExecutionService.ExecutionResult(
+                output: "Subject: Quarterly Review Meeting\n\nDear Team,\n\nI hope this message finds you well. I'm writing to schedule our quarterly review meeting for next week.\n\nPlease review the attached agenda and confirm your availability by end of day Friday.\n\nBest regards,\nJohn",
+                provider: "openai",
+                model: "gpt-4o",
+                modelTier: "smart",
+                tokensUsed: 342,
+                durationMs: 2150,
+                isByok: false
+            ),
+            onRunAgain: {}
+        )
     }
 }

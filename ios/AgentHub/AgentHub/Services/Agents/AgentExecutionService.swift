@@ -10,7 +10,7 @@ actor AgentExecutionService {
         let installed_agent_id: String?
     }
 
-    struct ExecutionResult: Decodable {
+    struct ExecutionResult: Decodable, Equatable {
         let output: String
         let provider: String
         let model: String
