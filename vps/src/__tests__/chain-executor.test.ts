@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
+import { resolvePrompt } from "../utils/prompt-utils.js";
 
-// Test chain execution logic (extracted for unit testing)
 interface StepConfig {
   name: string;
   systemPrompt: string;
@@ -14,61 +14,33 @@ interface StepResult {
   durationMs: number;
 }
 
-function buildStepPrompt(
-  systemPrompt: string,
-  inputValues: Record<string, string>,
-  previousOutput: string | null
-): string {
-  let prompt = systemPrompt;
-
-  // Replace input placeholders
-  for (const [key, value] of Object.entries(inputValues)) {
-    prompt = prompt.replace(new RegExp(`\\{\\{${key}\\}\\}`, "g"), value);
-  }
-
-  // Replace previous_output placeholder
-  if (previousOutput !== null) {
-    prompt = prompt.replace(/\{\{previous_output\}\}/g, previousOutput);
-  }
-
-  // Replace date placeholders
-  const now = new Date();
-  prompt = prompt.replace(/\{\{current_date\}\}/g, now.toISOString().split("T")[0]);
-  prompt = prompt.replace(
-    /\{\{current_day_of_week\}\}/g,
-    now.toLocaleDateString("en-US", { weekday: "long" })
-  );
-
-  return prompt;
-}
-
-describe("buildStepPrompt", () => {
+describe("resolvePrompt", () => {
   it("replaces input placeholders", () => {
-    const prompt = buildStepPrompt(
-      "Create a plan for {{priorities}} during {{work_hours}}",
-      { priorities: "Ship feature X", work_hours: "9 AM - 5 PM" },
-      null
+    const prompt = resolvePrompt(
+      "Create a plan for {{input.priorities}} during {{input.work_hours}}",
+      null,
+      { priorities: "Ship feature X", work_hours: "9 AM - 5 PM" }
     );
     expect(prompt).toContain("Ship feature X");
     expect(prompt).toContain("9 AM - 5 PM");
-    expect(prompt).not.toContain("{{priorities}}");
+    expect(prompt).not.toContain("{{input.priorities}}");
   });
 
   it("replaces previous_output in chained steps", () => {
-    const prompt = buildStepPrompt(
+    const prompt = resolvePrompt(
       "Based on {{previous_output}}, create action items",
-      {},
-      "Step 1 produced this output"
+      "Step 1 produced this output",
+      {}
     );
     expect(prompt).toContain("Step 1 produced this output");
     expect(prompt).not.toContain("{{previous_output}}");
   });
 
   it("replaces date placeholders", () => {
-    const prompt = buildStepPrompt(
+    const prompt = resolvePrompt(
       "Today is {{current_date}}, {{current_day_of_week}}",
-      {},
-      null
+      null,
+      {}
     );
     expect(prompt).toMatch(/\d{4}-\d{2}-\d{2}/);
     expect(prompt).not.toContain("{{current_date}}");
@@ -76,21 +48,21 @@ describe("buildStepPrompt", () => {
   });
 
   it("handles multiple occurrences of same placeholder", () => {
-    const prompt = buildStepPrompt(
-      "{{name}} is great. {{name}} is the best.",
-      { name: "Alice" },
-      null
+    const prompt = resolvePrompt(
+      "{{input.name}} is great. {{input.name}} is the best.",
+      null,
+      { name: "Alice" }
     );
     expect(prompt).toBe("Alice is great. Alice is the best.");
   });
 
-  it("leaves unknown placeholders as-is", () => {
-    const prompt = buildStepPrompt(
-      "Hello {{unknown_var}}",
-      {},
-      null
+  it("replaces missing input values with empty string", () => {
+    const prompt = resolvePrompt(
+      "Hello {{input.unknown_var}}!",
+      null,
+      {}
     );
-    expect(prompt).toBe("Hello {{unknown_var}}");
+    expect(prompt).toBe("Hello !");
   });
 });
 
@@ -112,7 +84,7 @@ describe("chain execution flow", () => {
 
   it("chains step outputs correctly", () => {
     const steps: StepConfig[] = [
-      { name: "Step 1", systemPrompt: "Analyze: {{priorities}}" },
+      { name: "Step 1", systemPrompt: "Analyze: {{input.priorities}}" },
       { name: "Step 2", systemPrompt: "Improve: {{previous_output}}" },
       { name: "Step 3", systemPrompt: "Finalize: {{previous_output}}" },
     ];
@@ -121,10 +93,10 @@ describe("chain execution flow", () => {
     const prompts: string[] = [];
 
     for (const step of steps) {
-      const prompt = buildStepPrompt(
+      const prompt = resolvePrompt(
         step.systemPrompt,
-        { priorities: "Build feature" },
-        previousOutput
+        previousOutput,
+        { priorities: "Build feature" }
       );
       prompts.push(prompt);
       previousOutput = `Output of ${step.name}`;

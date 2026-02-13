@@ -1,17 +1,8 @@
 import { getUserDeviceToken, updateAutomationRun } from "../services/supabase-service.js";
 import { sendPush } from "../services/apns-service.js";
+import { formatPushBody } from "../utils/push-utils.js";
 
 const PUSH_BODY_MAX_LENGTH = 200;
-
-/**
- * Truncate a string to the given max length, appending ellipsis if truncated.
- */
-function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) {
-    return text;
-  }
-  return text.slice(0, maxLength - 3) + "...";
-}
 
 /**
  * Send a push notification for a completed automation run.
@@ -43,8 +34,8 @@ export async function sendAutomationPush(
     return;
   }
 
-  // 2. Truncate the output for the push body
-  const pushBody = truncate(output, PUSH_BODY_MAX_LENGTH);
+  // 2. Format the output for the push body (strip markdown, truncate)
+  const pushBody = formatPushBody(output, PUSH_BODY_MAX_LENGTH);
 
   // 3. Send the push notification
   const success = await sendPush(deviceToken, pushTitle, pushBody, {

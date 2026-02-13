@@ -1,7 +1,7 @@
 import { Queue } from "bullmq";
 import IORedis from "ioredis";
-import cronParser from "cron-parser";
 import { config } from "../config.js";
+import { calculateNextRunAt } from "../utils/cron-utils.js";
 import {
   getDueAutomations,
   updateAutomationAfterRun,
@@ -17,27 +17,6 @@ const automationQueue = new Queue("automations", { connection });
 
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let isPolling = false;
-
-/**
- * Calculate the next run time from a cron expression and timezone.
- * Returns an ISO string for the next occurrence.
- */
-function calculateNextRunAt(cronExpression: string, timezone: string): string {
-  try {
-    const interval = cronParser.parseExpression(cronExpression, {
-      currentDate: new Date(),
-      tz: timezone,
-    });
-    const nextDate = interval.next().toDate();
-    return nextDate.toISOString();
-  } catch (err) {
-    console.error(
-      `[Scheduler] Failed to parse cron expression "${cronExpression}" with tz "${timezone}":`,
-      err
-    );
-    throw err;
-  }
-}
 
 /**
  * Process a single due automation: enqueue it and update its next_run_at.

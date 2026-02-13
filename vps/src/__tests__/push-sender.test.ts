@@ -1,52 +1,5 @@
 import { describe, it, expect } from "vitest";
-
-// Test push notification formatting logic (extracted for unit testing)
-
-function truncateForPush(text: string, maxLength: number = 200): string {
-  if (text.length <= maxLength) return text;
-
-  // Find a clean break point (end of sentence or word)
-  const truncated = text.slice(0, maxLength);
-  const lastPeriod = truncated.lastIndexOf(".");
-  const lastSpace = truncated.lastIndexOf(" ");
-
-  if (lastPeriod > maxLength * 0.6) {
-    return truncated.slice(0, lastPeriod + 1);
-  }
-  if (lastSpace > maxLength * 0.6) {
-    return truncated.slice(0, lastSpace) + "...";
-  }
-  return truncated + "...";
-}
-
-function formatPushBody(output: string, maxLength: number = 200): string {
-  // Strip markdown formatting for push notifications
-  let clean = output
-    .replace(/#{1,6}\s+/g, "")           // headers
-    .replace(/\*\*(.*?)\*\*/g, "$1")      // bold
-    .replace(/\*(.*?)\*/g, "$1")          // italic
-    .replace(/`(.*?)`/g, "$1")           // inline code
-    .replace(/\n{2,}/g, "\n")            // multiple newlines
-    .replace(/^[-*]\s+/gm, "• ")         // bullet points
-    .trim();
-
-  return truncateForPush(clean, maxLength);
-}
-
-function buildPushPayload(
-  title: string,
-  body: string,
-  data?: Record<string, string>
-) {
-  return {
-    aps: {
-      alert: { title, body },
-      sound: "default",
-      badge: 1,
-    },
-    ...(data && { data }),
-  };
-}
+import { truncateForPush, formatPushBody, buildPushPayload } from "../utils/push-utils.js";
 
 describe("truncateForPush", () => {
   it("returns short text as-is", () => {

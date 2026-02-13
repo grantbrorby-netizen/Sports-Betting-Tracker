@@ -1,96 +1,101 @@
 import { assertEquals, assert } from "https://deno.land/std@0.220.0/assert/mod.ts";
+import { schemaCheck } from "../security-scanner/checks/schema-check.ts";
 
-// Inline validator for testing (same logic as validate-template.ts)
-function validateTemplateFields(template: Record<string, unknown>): string[] {
-  const errors: string[] = [];
+// --- Tests ---
 
-  const required = ["id", "version", "metadata", "inputs", "output", "ai"];
-  for (const field of required) {
-    if (!(field in template)) errors.push(`Missing: ${field}`);
-  }
-
-  if (typeof template.id === "string" && !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(template.id)) {
-    errors.push("Invalid id format");
-  }
-
-  if (typeof template.version === "string" && !/^\d+\.\d+\.\d+$/.test(template.version)) {
-    errors.push("Invalid version format");
-  }
-
-  if (template.metadata && typeof template.metadata === "object") {
-    const meta = template.metadata as Record<string, unknown>;
-    const validCategories = ["writing", "finance", "productivity", "health", "cooking", "legal"];
-    if (meta.category && !validCategories.includes(meta.category as string)) {
-      errors.push(`Invalid category: ${meta.category}`);
-    }
-  }
-
-  if (template.ai && typeof template.ai === "object") {
-    const ai = template.ai as Record<string, unknown>;
-    const validTiers = ["fast", "smart", "deep", "max"];
-    if (ai.defaultModelTier && !validTiers.includes(ai.defaultModelTier as string)) {
-      errors.push(`Invalid model tier: ${ai.defaultModelTier}`);
-    }
-  }
-
-  return errors;
-}
-
-Deno.test("valid template passes", () => {
+Deno.test("valid template passes all schema checks", () => {
   const template = {
     id: "email-writer",
     version: "1.0.0",
     metadata: { name: "Email Writer", description: "Writes emails", category: "writing", iconName: "envelope", author: "Test" },
     inputs: [{ id: "topic", type: "text", label: "Topic" }],
     output: { format: "markdown" },
-    ai: { defaultModelTier: "fast", systemPrompt: "You are an email writer. Write about {{topic}}." },
+    ai: { defaultModelTier: "fast", systemPrompt: "Write about {{topic}}", temperature: 0.7, maxTokens: 1024 },
   };
-  const errors = validateTemplateFields(template);
-  assertEquals(errors.length, 0);
+  assertEquals(schemaCheck(template).length, 0);
 });
 
-Deno.test("missing required fields", () => {
-  const template = { id: "test" };
-  const errors = validateTemplateFields(template);
-  assert(errors.length > 0);
-  assert(errors.some(e => e.includes("Missing")));
+Deno.test("missing required fields detected", () => {
+  const findings = schemaCheck({ id: "test" });
+  assert(findings.length >= 4);
+  assert(findings.some(f => f.severity === "critical" && f.message.includes("Missing")));
 });
 
-Deno.test("invalid id format", () => {
+Deno.test("invalid id format detected", () => {
   const template = {
-    id: "Invalid_ID",
+    id: "Invalid_ID!",
     version: "1.0.0",
-    metadata: { name: "T", description: "D", category: "writing", iconName: "i", author: "A" },
-    inputs: [{ id: "x", type: "text", label: "X" }],
-    output: { format: "text" },
-    ai: { defaultModelTier: "fast", systemPrompt: "Do something {{x}}" },
+    metadata: { category: "writing" },
+    inputs: [],
+    output: {},
+    ai: { defaultModelTier: "fast" },
   };
-  const errors = validateTemplateFields(template);
-  assert(errors.some(e => e.includes("Invalid id")));
+  const findings = schemaCheck(template);
+  assert(findings.some(f => f.message.includes("Invalid id")));
 });
 
-Deno.test("invalid category", () => {
+Deno.test("invalid category detected", () => {
   const template = {
-    id: "test",
+    id: "test-agent",
     version: "1.0.0",
-    metadata: { name: "T", description: "D", category: "invalid", iconName: "i", author: "A" },
-    inputs: [{ id: "x", type: "text", label: "X" }],
-    output: { format: "text" },
-    ai: { defaultModelTier: "fast", systemPrompt: "Do something {{x}}" },
+    metadata: { category: "gaming" },
+    inputs: [],
+    output: {},
+    ai: { defaultModelTier: "fast" },
   };
-  const errors = validateTemplateFields(template);
-  assert(errors.some(e => e.includes("Invalid category")));
+  const findings = schemaCheck(template);
+  assert(findings.some(f => f.message.includes("Invalid category")));
 });
 
-Deno.test("invalid model tier", () => {
+Deno.test("invalid model tier detected", () => {
   const template = {
-    id: "test",
+    id: "test-agent",
     version: "1.0.0",
-    metadata: { name: "T", description: "D", category: "writing", iconName: "i", author: "A" },
-    inputs: [{ id: "x", type: "text", label: "X" }],
-    output: { format: "text" },
-    ai: { defaultModelTier: "ultra", systemPrompt: "Do something {{x}}" },
+    metadata: { category: "writing" },
+    inputs: [],
+    output: {},
+    ai: { defaultModelTier: "turbo" },
   };
-  const errors = validateTemplateFields(template);
-  assert(errors.some(e => e.includes("Invalid model tier")));
+  const findings = schemaCheck(template);
+  assert(findings.some(f => f.message.includes("Invalid model tier")));
+});
+
+Deno.test("invalid version format detected", () => {
+  const template = {
+    id: "test-agent",
+    version: "v1.0",
+    metadata: { category: "writing" },
+    inputs: [],
+    output: {},
+    ai: { defaultModelTier: "fast" },
+  };
+  const findings = schemaCheck(template);
+  assert(findings.some(f => f.message.includes("Invalid version")));
+});
+
+Deno.test("too many inputs detected", () => {
+  const inputs = Array(12).fill({ id: "field", type: "text", label: "Field" });
+  const template = {
+    id: "test-agent",
+    version: "1.0.0",
+    metadata: { category: "writing" },
+    inputs,
+    output: {},
+    ai: { defaultModelTier: "fast" },
+  };
+  const findings = schemaCheck(template);
+  assert(findings.some(f => f.message.includes("Too many inputs")));
+});
+
+Deno.test("invalid input type detected", () => {
+  const template = {
+    id: "test-agent",
+    version: "1.0.0",
+    metadata: { category: "writing" },
+    inputs: [{ id: "field", type: "dropdown", label: "Field" }],
+    output: {},
+    ai: { defaultModelTier: "fast" },
+  };
+  const findings = schemaCheck(template);
+  assert(findings.some(f => f.message.includes("Invalid input type")));
 });

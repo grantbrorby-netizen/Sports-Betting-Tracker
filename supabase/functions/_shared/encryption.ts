@@ -11,7 +11,7 @@ function getEncryptionKey(): string {
   return key;
 }
 
-function hexToBytes(hex: string): Uint8Array {
+export function hexToBytes(hex: string): Uint8Array {
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < hex.length; i += 2) {
     bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
@@ -19,7 +19,7 @@ function hexToBytes(hex: string): Uint8Array {
   return bytes;
 }
 
-function bytesToHex(bytes: Uint8Array): string {
+export function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes)
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
@@ -37,9 +37,9 @@ async function importKey(keyHex: string): Promise<CryptoKey> {
 }
 
 /** Encrypt a plaintext string. Returns hex(iv + ciphertext). */
-export async function encrypt(plaintext: string): Promise<string> {
-  const keyHex = getEncryptionKey();
-  const key = await importKey(keyHex);
+export async function encrypt(plaintext: string, keyHex?: string): Promise<string> {
+  const resolvedKey = keyHex ?? getEncryptionKey();
+  const key = await importKey(resolvedKey);
 
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
   const encoded = new TextEncoder().encode(plaintext);
@@ -61,9 +61,9 @@ export async function encrypt(plaintext: string): Promise<string> {
 }
 
 /** Decrypt a hex(iv + ciphertext) string. Returns plaintext. */
-export async function decrypt(encryptedHex: string): Promise<string> {
-  const keyHex = getEncryptionKey();
-  const key = await importKey(keyHex);
+export async function decrypt(encryptedHex: string, keyHex?: string): Promise<string> {
+  const resolvedKey = keyHex ?? getEncryptionKey();
+  const key = await importKey(resolvedKey);
 
   const combined = hexToBytes(encryptedHex);
   const iv = combined.slice(0, IV_LENGTH);

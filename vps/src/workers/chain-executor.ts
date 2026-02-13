@@ -1,4 +1,5 @@
 import type { AutomationStep } from "../services/supabase-service.js";
+import { resolvePrompt } from "../utils/prompt-utils.js";
 
 // ----- Types -----
 
@@ -82,37 +83,6 @@ async function callAiBrokerStep(
     tokensUsed: json.data.tokens_used,
     durationMs: json.data.duration_ms,
   };
-}
-
-/**
- * Replace template variables in a system prompt.
- *
- * Supported variables:
- *   - {{previous_output}} : replaced with the output of the previous step
- *   - {{input.KEY}}       : replaced with the value of inputValues[KEY]
- */
-function resolvePrompt(
-  systemPrompt: string,
-  previousOutput: string | null,
-  inputValues: Record<string, unknown>
-): string {
-  let resolved = systemPrompt;
-
-  // Replace {{previous_output}} with the prior step's output
-  if (previousOutput !== null) {
-    resolved = resolved.replace(/\{\{previous_output\}\}/g, previousOutput);
-  }
-
-  // Replace {{input.KEY}} patterns with input values
-  resolved = resolved.replace(/\{\{input\.(\w+)\}\}/g, (_match, key: string) => {
-    const value = inputValues[key];
-    if (value === undefined || value === null) {
-      return "";
-    }
-    return String(value);
-  });
-
-  return resolved;
 }
 
 /**

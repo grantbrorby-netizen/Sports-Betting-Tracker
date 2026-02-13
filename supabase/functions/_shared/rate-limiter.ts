@@ -91,3 +91,8 @@ export const RATE_LIMITS = {
     keyPrefix: "scanner",
   } satisfies RateLimitConfig,
 };
+
+/** Clear the in-memory store. For use in tests only. */
+export function _resetForTesting(): void {
+  memoryStore.clear();
+}
